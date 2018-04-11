@@ -1,0 +1,11 @@
+# Global
+.env
+.*.swp
+.DS_Store
+
+# Application
+web/app/composer.json
+
+# PHPStorm
+.idea
+
