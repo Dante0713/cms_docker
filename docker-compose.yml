@@ -7,9 +7,9 @@ services:
     mongodb:
         image: library/mongo:3.4.9
         volumes:
-           - ./data/mongodb:/data/db
+           - ./data/mongodb:/data
         ports:
-           - "27017"
+           - "27017:27017"
         restart: always
         privileged: true
 
@@ -28,26 +28,9 @@ services:
         command: /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
         restart: always
         depends_on:
-            - cms
-            - parenting
+            - forum           
             - mysqldb
             - mongodb
-
-    cms:
-        build:
-              context: ./fpm
-        restart: always
-        volumes:
-            - "./web:/var/app"
-        working_dir: /var/app/cms
-
-    parenting:
-         build:
-               context: ./fpm
-         restart: always
-         volumes:
-            - "./web:/var/app"
-         working_dir: /var/app/parenting
 
     myadmin:
         image: phpmyadmin/phpmyadmin
@@ -71,9 +54,16 @@ services:
             - MYSQL_USER=${MYSQL_USER}
             - MYSQL_PASSWORD=${MYSQL_PASSWORD}
         ports:
-            - "3306"
+            - "32775:3306"
         volumes:
             - "./data/db/mysql:/var/lib/mysql"
 
         command: mysqld --sql_mode=""
 
+    forum:
+        build:
+             context: ./fpm
+        restart: always
+        volumes:
+            - "./web:/var/app"
+        working_dir: /var/app/forum
